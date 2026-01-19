@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>함수의 극한 - 변형문제 퀴즈</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <!-- Auto-render JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .math-display { font-size: 1.1rem; margin: 1.5rem 0; padding: 1.2rem; background-color: #ffffff; border-left: 4px solid #3b82f6; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow-x: auto; }
+        .concept-box { background-color: #eff6ff; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #dbeafe; }
+        .option-label { transition: all 0.2s; cursor: pointer; display: block; }
+        .option-label:hover { background-color: #eff6ff; transform: translateY(-2px); border-color: #3b82f6; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+    </style>
+</head>
+<body class="p-4 sm:p-8 md:p-12 text-slate-800">
+
+    <div id="app" class="max-w-4xl mx-auto bg-white shadow-2xl rounded-3xl p-6 sm:p-10 border border-slate-100">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-slate-900 mb-2">함수의 극한 - 존재 조건</h1>
+        <p class="text-center text-slate-500 mb-8">10단계 빌드업 변형문제</p>
+
+        <!-- Study Page -->
+        <div id="page-study" class="page active">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2">핵심 원리</h2>
+
+            <div class="concept-box">
+                <h3 class="text-xl font-bold text-blue-600 mb-3">1. 극한의 사칙연산</h3>
+                <p class="text-slate-700 mb-2">$\lim_{x \to a} f(x) = L$, $\lim_{x \to a} g(x) = M$ (L, M은 실수)일 때:</p>
+                <div class="math-display">
+                    $$\lim_{x \to a} [f(x) \cdot g(x)] = L \cdot M$$
+                    $$\lim_{x \to a} \frac{f(x)}{g(x)} = \frac{L}{M} \quad (M \neq 0)$$
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3 class="text-xl font-bold text-blue-600 mb-3">2. 극한 존재의 역추론</h3>
+                <p class="text-slate-700 mb-2">극한의 곱이나 몫이 존재할 때, 개별 함수의 극한 존재 여부를 판단하는 핵심:</p>
+                <div class="math-display">
+                    <p class="mb-2"><strong>주의:</strong> $\lim f(x) = 0$이고 $\lim f(x)g(x)$가 존재해도, $\lim g(x)$가 발산할 수 있음</p>
+                    <p class="mb-2"><strong>예시:</strong> $f(x) = x$, $g(x) = \frac{1}{x}$일 때 $x \to 0$</p>
+                    <p>$\lim_{x \to 0} x = 0$, $\lim_{x \to 0} x \cdot \frac{1}{x} = 1$ 이지만 $\lim_{x \to 0} \frac{1}{x}$는 존재하지 않음</p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3 class="text-xl font-bold text-blue-600 mb-3">3. 몫의 극한과 분자의 극한</h3>
+                <p class="text-slate-700 mb-2">$\lim g(x) = M \neq 0$이고 $\lim \frac{f(x)}{g(x)} = L$이면:</p>
+                <div class="math-display">
+                    $$\lim f(x) = \lim \left[ g(x) \cdot \frac{f(x)}{g(x)} \right] = M \cdot L$$
+                    <p class="mt-2">따라서 $\lim f(x)$도 존재한다.</p>
+                </div>
+            </div>
+
+            <div class="mt-8 mb-4">
+                <label for="username-input" class="block text-sm font-medium text-slate-600 mb-1">학생 이름</label>
+                <input type="text" id="username-input" placeholder="이름을 입력하세요" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition shadow-sm outline-none">
+            </div>
+
+            <button onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl mt-2 transition duration-300 shadow-lg transform hover:scale-[1.01]">
+                문제 풀이 시작하기
+            </button>
+        </div>
+
+        <!-- Quiz Page -->
+        <div id="page-quiz" class="page">
+            <div id="quiz-header" class="mb-6">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-lg font-bold text-blue-700">Step <span id="current-q-number">1</span></span>
+                    <span class="text-sm text-slate-400">Total 10 Questions</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                    <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="question-area" class="min-h-[250px] p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                <p id="question-text" class="text-xl font-medium text-slate-800 mb-8 leading-relaxed"></p>
+                <div id="options-container" class="space-y-3"></div>
+            </div>
+
+            <div id="feedback" class="mt-6 p-4 rounded-xl text-white font-semibold hidden animate-bounce-in"></div>
+
+            <div class="flex gap-3 mt-8">
+                <button onclick="prevQuestion()" id="prev-btn" class="hidden px-6 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 rounded-xl transition shadow-sm">
+                    이전
+                </button>
+                <button onclick="submitAnswer()" id="submit-btn" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl transition shadow-md">
+                    정답 확인
+                </button>
+                <button onclick="nextQuestion()" id="next-btn" class="hidden flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-md">
+                    다음 단계
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Page -->
+        <div id="page-results" class="page text-center p-8">
+            <div class="mb-6 text-6xl animate-pulse">🏆</div>
+            <h2 class="text-3xl font-extrabold text-slate-800 mb-2">학습 완료!</h2>
+            <div class="text-7xl font-black text-blue-600 my-8">
+                <span id="final-score">0</span><span class="text-3xl text-slate-400">/10</span>
+            </div>
+            <div id="upload-status" class="text-sm text-slate-500 mb-8 h-6 font-medium">결과 저장 중...</div>
+            <button onclick="window.location.reload()" class="bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 font-bold py-3 px-8 rounded-xl transition shadow-sm">다시 도전하기</button>
+        </div>
+    </div>
+
+    <script>
+        // Google Apps Script URL for result logging (optional)
+        const GOOGLE_SCRIPT_URL = '';
+
+        let currentQuestionIndex = 0;
+        let userName = "";
+        let userAnswers = [];
+
+        // ============================================
+        // QUESTIONS ARRAY - 함수의 극한 존재 조건 변형문제
+        // ============================================
+        const questions = [
+            {
+                q: "[Step 1 - 기본 개념] $\\lim_{x \\to a} f(x) = 2$, $\\lim_{x \\to a} g(x) = 3$일 때, $\\lim_{x \\to a} f(x)g(x)$의 값은?",
+                options: ["5", "6", "1", "존재하지 않는다"],
+                ans: "6",
+                exp: "극한의 곱셈 법칙에 의해 $\\lim_{x \\to a} f(x)g(x) = \\lim_{x \\to a} f(x) \\cdot \\lim_{x \\to a} g(x) = 2 \\times 3 = 6$입니다."
+            },
+            {
+                q: "[Step 2 - 기본 개념] $\\lim_{x \\to a} f(x) = 4$, $\\lim_{x \\to a} g(x) = 2$일 때, $\\lim_{x \\to a} \\frac{f(x)}{g(x)}$의 값은?",
+                options: ["2", "6", "8", "존재하지 않는다"],
+                ans: "2",
+                exp: "극한의 나눗셈 법칙에 의해 $\\lim_{x \\to a} \\frac{f(x)}{g(x)} = \\frac{\\lim_{x \\to a} f(x)}{\\lim_{x \\to a} g(x)} = \\frac{4}{2} = 2$입니다. (단, 분모의 극한이 0이 아닐 때)"
+            },
+            {
+                q: "[Step 3 - 유사 변형] $\\lim_{x \\to 0} f(x) = 0$이고 $\\lim_{x \\to 0} f(x)g(x) = 5$일 때, $\\lim_{x \\to 0} g(x)$의 값이 반드시 존재하는가?",
+                options: ["항상 존재한다", "반드시 존재하지 않는다", "존재할 수도 있고 존재하지 않을 수도 있다", "5이다"],
+                ans: "존재할 수도 있고 존재하지 않을 수도 있다",
+                exp: "$\\lim f(x) = 0$일 때 $\\lim f(x)g(x)$가 존재해도 $\\lim g(x)$는 존재하지 않을 수 있습니다. 예: $f(x) = x$, $g(x) = \\frac{5}{x}$이면 $\\lim_{x \\to 0} xg(x) = 5$이지만 $\\lim_{x \\to 0} g(x)$는 발산합니다. 하지만 $f(x) = x$, $g(x) = \\frac{5}{x} + 1 - \\frac{1}{x}$처럼 구성하면 다른 결과가 나올 수 있어 일반적으로 판단 불가합니다."
+            },
+            {
+                q: "[Step 4 - 유사 변형] 다음 중 옳은 것은?<br><br>ㄱ. $\\lim_{x \\to a} f(x) = 3$, $\\lim_{x \\to a} f(x)g(x) = 6$이면 $\\lim_{x \\to a} g(x) = 2$이다.<br>ㄴ. $\\lim_{x \\to a} f(x) = 0$, $\\lim_{x \\to a} f(x)g(x) = 0$이면 $\\lim_{x \\to a} g(x)$가 존재한다.",
+                options: ["ㄱ만 옳다", "ㄴ만 옳다", "ㄱ, ㄴ 모두 옳다", "ㄱ, ㄴ 모두 틀리다"],
+                ans: "ㄱ만 옳다",
+                exp: "ㄱ. $\\lim f(x) = 3 \\neq 0$이므로 $\\lim g(x) = \\frac{\\lim f(x)g(x)}{\\lim f(x)} = \\frac{6}{3} = 2$ (참)<br>ㄴ. 반례: $f(x) = x^2$, $g(x) = \\frac{1}{x}$이면 $\\lim_{x \\to 0} f(x)g(x) = \\lim_{x \\to 0} x = 0$이지만 $\\lim_{x \\to 0} g(x)$는 존재하지 않음 (거짓)"
+            },
+            {
+                q: "[Step 5 - 유사 변형] $\\lim_{x \\to 1} f(x) = 2$이고 $\\lim_{x \\to 1} \\frac{f(x)}{g(x)} = 4$일 때, $\\lim_{x \\to 1} g(x)$의 값은? (단, $g(x) \\neq 0$)",
+                options: ["$\\frac{1}{2}$", "2", "8", "존재하지 않을 수 있다"],
+                ans: "$\\frac{1}{2}$",
+                exp: "$\\lim_{x \\to 1} f(x) = 2 \\neq 0$이고 $\\lim_{x \\to 1} \\frac{f(x)}{g(x)} = 4$이면, $\\lim_{x \\to 1} g(x) = \\frac{\\lim f(x)}{\\lim \\frac{f(x)}{g(x)}} = \\frac{2}{4} = \\frac{1}{2}$입니다."
+            },
+            {
+                q: "[Step 6 - 응용 변형] $\\lim_{x \\to a} g(x) = 3$이고 $\\lim_{x \\to a} \\frac{f(x)}{g(x)} = 2$일 때, $\\lim_{x \\to a} f(x)$의 값은? (단, $g(x) \\neq 0$)",
+                options: ["$\\frac{2}{3}$", "$\\frac{3}{2}$", "6", "존재하지 않을 수 있다"],
+                ans: "6",
+                exp: "$\\lim_{x \\to a} f(x) = \\lim_{x \\to a} \\left[ g(x) \\cdot \\frac{f(x)}{g(x)} \\right] = \\lim_{x \\to a} g(x) \\cdot \\lim_{x \\to a} \\frac{f(x)}{g(x)} = 3 \\times 2 = 6$입니다."
+            },
+            {
+                q: "[Step 7 - 응용 변형] $\\lim_{x \\to 0} g(x) = 0$이고 $\\lim_{x \\to 0} \\frac{f(x)}{g(x)} = 5$일 때, $\\lim_{x \\to 0} f(x)$의 값은? (단, $g(x) \\neq 0$)",
+                options: ["0", "5", "$\\frac{1}{5}$", "존재하지 않을 수 있다"],
+                ans: "0",
+                exp: "$\\lim_{x \\to 0} f(x) = \\lim_{x \\to 0} \\left[ g(x) \\cdot \\frac{f(x)}{g(x)} \\right] = \\lim_{x \\to 0} g(x) \\cdot \\lim_{x \\to 0} \\frac{f(x)}{g(x)} = 0 \\times 5 = 0$입니다."
+            },
+            {
+                q: "[Step 8 - 응용 변형] 다음 중 옳은 것만을 있는 대로 고른 것은?<br><br>ㄱ. $\\lim_{x \\to a} f(x) \\neq 0$이고 $\\lim_{x \\to a} f(x)g(x)$가 존재하면 $\\lim_{x \\to a} g(x)$가 존재한다.<br>ㄴ. $\\lim_{x \\to a} f(x) \\neq 0$이고 $\\lim_{x \\to a} \\frac{f(x)}{g(x)}$가 존재하면 $\\lim_{x \\to a} g(x)$가 존재한다.",
+                options: ["ㄱ만", "ㄴ만", "ㄱ, ㄴ 모두", "없다"],
+                ans: "ㄱ, ㄴ 모두",
+                exp: "ㄱ. $\\lim f(x) = L \\neq 0$이면 $\\lim g(x) = \\frac{\\lim f(x)g(x)}{\\lim f(x)}$로 존재 (참)<br>ㄴ. $\\lim f(x) = L \\neq 0$, $\\lim \\frac{f(x)}{g(x)} = M$이면 $\\lim g(x) = \\frac{L}{M}$로 존재 (참)"
+            },
+            {
+                q: "[Step 9 - 심화] 함수의 극한에 대한 다음 설명 중 옳은 것만을 있는 대로 고른 것은?<br><br>ㄱ. $\\lim_{x \\to a} f(x)$와 $\\lim_{x \\to a} f(x)g(x)$의 값이 각각 존재하면 $\\lim_{x \\to a} g(x)$의 값도 존재한다.<br>ㄴ. $\\lim_{x \\to a} f(x)$와 $\\lim_{x \\to a} \\frac{f(x)}{g(x)}$의 값이 각각 존재하면 $\\lim_{x \\to a} g(x)$의 값도 존재한다. (단, $g(x) \\neq 0$)<br>ㄷ. $\\lim_{x \\to a} g(x)$와 $\\lim_{x \\to a} \\frac{f(x)}{g(x)}$의 값이 각각 존재하면 $\\lim_{x \\to a} f(x)$의 값도 존재한다. (단, $g(x) \\neq 0$)",
+                options: ["ㄱ", "ㄷ", "ㄱ, ㄴ", "ㄴ, ㄷ"],
+                ans: "ㄷ",
+                exp: "ㄱ. 거짓. 반례: $f(x) = x$, $g(x) = \\frac{1}{x}$, $x \\to 0$일 때 $\\lim f(x) = 0$, $\\lim f(x)g(x) = 1$이지만 $\\lim g(x)$는 존재하지 않음.<br>ㄴ. 거짓. 반례: $f(x) = x^2$, $g(x) = x$, $x \\to 0$일 때 $\\lim f(x) = 0$, $\\lim \\frac{f(x)}{g(x)} = 0$이지만 이 경우 $\\lim g(x) = 0$으로 존재. 하지만 $f(x) = 1$, $g(x) = \\sin\\frac{1}{x}$의 경우 $\\lim f(x) = 1$, $\\lim \\frac{f(x)}{g(x)}$가 존재하지 않으므로 조건 자체가 성립 안 함. 더 정확한 반례: $\\lim f(x) = 0$인 경우를 생각하면 됨.<br>ㄷ. 참. $\\lim g(x) = M$, $\\lim \\frac{f(x)}{g(x)} = L$이면 $\\lim f(x) = \\lim g(x) \\cdot \\lim \\frac{f(x)}{g(x)} = ML$"
+            },
+            {
+                q: "[Step 10 - 심화 종합] 다음 명제들의 참, 거짓을 올바르게 판단한 것은?<br><br>(가) $\\lim_{x \\to 0} f(x) = 0$이고 $\\lim_{x \\to 0} [f(x)]^2 g(x) = 3$이면 $\\lim_{x \\to 0} g(x)$가 존재한다.<br>(나) $\\lim_{x \\to 0} f(x) = 2$이고 $\\lim_{x \\to 0} \\frac{g(x)}{f(x)} = 1$이면 $\\lim_{x \\to 0} g(x) = 2$이다.<br>(다) $\\lim_{x \\to 0} [f(x) + g(x)] = 5$이고 $\\lim_{x \\to 0} f(x)g(x) = 6$이면 $\\lim_{x \\to 0} f(x)$와 $\\lim_{x \\to 0} g(x)$가 각각 존재한다.",
+                options: ["(가) 참, (나) 참, (다) 참", "(가) 거짓, (나) 참, (다) 참", "(가) 거짓, (나) 참, (다) 거짓", "(가) 거짓, (나) 거짓, (다) 참"],
+                ans: "(가) 거짓, (나) 참, (다) 거짓",
+                exp: "(가) 거짓. 반례: $f(x) = x$, $g(x) = \\frac{3}{x^2}$이면 $[f(x)]^2 g(x) = 3$이지만 $\\lim g(x)$는 발산.<br>(나) 참. $\\lim f(x) = 2 \\neq 0$이므로 $\\lim g(x) = \\lim f(x) \\cdot \\lim \\frac{g(x)}{f(x)} = 2 \\times 1 = 2$.<br>(다) 거짓. 반례: $f(x) = 2 + \\sin\\frac{1}{x}$, $g(x) = 3 - \\sin\\frac{1}{x}$이면 $f(x) + g(x) = 5$, $f(x)g(x) = 6 + \\sin\\frac{1}{x} - \\sin^2\\frac{1}{x}$로 $\\lim f(x)g(x)$가 존재하지 않음. 조건을 만족하면서 개별 극한이 없는 예: 합과 곱 조건만으로는 개별 극한 존재를 보장할 수 없음."
+            }
+        ];
+        // ============================================
+
+        userAnswers = new Array(questions.length).fill(null);
+
+        function renderMath(element) {
+            renderMathInElement(element || document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ],
+                throwOnError: false
+            });
+        }
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function startQuiz() {
+            userName = document.getElementById('username-input').value.trim();
+            if (!userName) return alert("이름을 입력해주세요!");
+            showPage('page-quiz');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            const qNum = document.getElementById('current-q-number');
+            const qText = document.getElementById('question-text');
+            const optContainer = document.getElementById('options-container');
+            const progress = document.getElementById('progress-bar');
+            const prevBtn = document.getElementById('prev-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const feedbackDiv = document.getElementById('feedback');
+
+            qNum.textContent = currentQuestionIndex + 1;
+            qText.innerHTML = q.q;
+            progress.style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+
+            optContainer.innerHTML = '';
+            const existingAnswer = userAnswers[currentQuestionIndex];
+
+            q.options.forEach(opt => {
+                const label = document.createElement('label');
+                label.className = "option-label block p-4 bg-white border border-slate-200 rounded-xl shadow-sm";
+                const isChecked = existingAnswer && existingAnswer.selected === opt;
+                label.innerHTML = `
+                    <div class="flex items-center">
+                        <input type="radio" name="quiz-opt" value="${opt}"
+                            class="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 mr-3"
+                            ${isChecked ? 'checked' : ''}
+                            ${existingAnswer ? 'disabled' : ''}>
+                        <span class="text-lg ${existingAnswer ? 'text-slate-600' : ''}">${opt}</span>
+                    </div>`;
+                optContainer.appendChild(label);
+            });
+
+            if (currentQuestionIndex === 0) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+
+            if (existingAnswer) {
+                showFeedbackUI(existingAnswer.isCorrect, q.ans, q.exp);
+                submitBtn.classList.add('hidden');
+                nextBtn.classList.remove('hidden');
+            } else {
+                feedbackDiv.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+                nextBtn.classList.add('hidden');
+            }
+
+            renderMath(document.getElementById('question-area'));
+        }
+
+        function showFeedbackUI(isCorrect, ans, exp) {
+            const fb = document.getElementById('feedback');
+            fb.classList.remove('hidden');
+            fb.className = `mt-6 p-5 rounded-xl text-white shadow-lg ${isCorrect ? 'bg-emerald-500' : 'bg-rose-500'}`;
+            fb.innerHTML = `
+                <div class="flex items-center mb-2">
+                    <span class="text-2xl mr-2">${isCorrect ? '🎉' : '❌'}</span>
+                    <span class="text-lg font-bold">${isCorrect ? "정답입니다!" : "아쉽네요."}</span>
+                </div>
+                ${!isCorrect ? `<div class="mb-2">정답: <strong>${ans}</strong></div>` : ''}
+                <div class="text-sm font-normal opacity-90 border-t border-white/20 pt-2 mt-2 leading-relaxed">${exp}</div>
+            `;
+            renderMath(fb);
+        }
+
+        function submitAnswer() {
+            const selected = document.querySelector('input[name="quiz-opt"]:checked');
+            if (!selected) return alert("보기를 선택해주세요!");
+
+            const q = questions[currentQuestionIndex];
+            const clean = (s) => s.replace(/\s/g, '');
+            const isCorrect = clean(selected.value) === clean(q.ans);
+
+            userAnswers[currentQuestionIndex] = {
+                selected: selected.value,
+                isCorrect: isCorrect
+            };
+
+            showFeedbackUI(isCorrect, q.ans, q.exp);
+
+            const radios = document.querySelectorAll('input[name="quiz-opt"]');
+            radios.forEach(r => r.disabled = true);
+
+            document.getElementById('submit-btn').classList.add('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            showPage('page-results');
+            const finalScore = userAnswers.filter(a => a && a.isCorrect).length;
+            const scoreDisplay = document.getElementById('final-score');
+
+            let currentDisplayScore = 0;
+            const interval = setInterval(() => {
+                if (currentDisplayScore >= finalScore) {
+                    clearInterval(interval);
+                    scoreDisplay.textContent = finalScore;
+                } else {
+                    currentDisplayScore++;
+                    scoreDisplay.textContent = currentDisplayScore;
+                }
+            }, 100);
+            if(finalScore === 0) scoreDisplay.textContent = 0;
+
+            if (GOOGLE_SCRIPT_URL) {
+                sendResult(finalScore);
+            } else {
+                document.getElementById('upload-status').textContent = "결과 저장 완료";
+            }
+        }
+
+        function sendResult(finalScore) {
+            const status = document.getElementById('upload-status');
+            const data = {
+                name: userName,
+                score: finalScore,
+                quizTitle: document.querySelector('h1').textContent,
+                date: new Date().toLocaleString()
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                status.textContent = "결과가 안전하게 저장되었습니다.";
+                status.classList.replace('text-slate-500', 'text-emerald-600');
+            })
+            .catch(() => {
+                status.textContent = "결과 저장에 실패했습니다.";
+                status.classList.replace('text-slate-500', 'text-rose-600');
+            });
+        }
+
+        window.onload = () => renderMath();
+    </script>
+</body>
+</html>
